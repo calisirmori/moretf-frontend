@@ -24,7 +24,7 @@ export default function LogPage({ logId }: Props) {
   if (!data) return <p className="text-white">Loading log data...</p>;
 
   return (
-    <div className=" bg-warm-700 min-h-screen p-6 text-white flex justify-center items-center">
+    <div className=" bg-light-50 dark:bg-warm-700 min-h-screen p-6 text-white flex justify-center items-center">
       <div className="min-h-screen max-w-7xl w-full">
         <LogHeader info={data.info} />
         <LogStatsTable data={data.players} gameLengthMinutes={data.info.durationSeconds / 60} />

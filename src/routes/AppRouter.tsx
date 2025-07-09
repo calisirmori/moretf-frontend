@@ -8,7 +8,7 @@ export default function AppRouter() {
   return (
     <div className="font-ttnorms">
       <BrowserRouter>
-        {/* <Navbar /> */}
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/log/:logId" element={<LogPageWrapper />} />
