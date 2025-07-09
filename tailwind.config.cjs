@@ -1,0 +1,66 @@
+// tailwind.config.js
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        ttnorms: ["TTNorms", "sans-serif"],
+        ttnormsmono: ["TTNormsMono", "monospace"],
+      },
+      colors: {
+        brand: {
+          orange: "#F08149",
+          "orange-dark": "#A35832",
+          red: "#BD3B3B",
+          "red-dark": "#802828",
+          "red-deep": "#4A1B1B",
+          blue: "#395C78",
+          "blue-dark": "#273E51",
+          "blue-deep": "#1B2731",
+        },
+        gray: {
+          900: "#0F1012",
+          800: "#15171A",
+          700: "#202225",
+          600: "#2C2E30",
+          500: "#36383A",
+          400: "#424346",
+          300: "#595A5C",
+          200: "#6F7072",
+          100: "#9B9C9D",
+          50: "#CFCFCF",
+        },
+        warm: {
+          900: "#0A0909",
+          850: "#0F0E0D",
+          820: "#0C0B0A",
+          800: "#141312",
+          700: "#1F1D1B",
+          600: "#292624",
+          500: "#34302D",
+          400: "#3F3A36",
+          300: "#49433F",
+          200: "#544D48",
+          100: "#5E5751",
+          50: "#69615A",
+        },
+        light: {
+          900: "#736A64",
+          800: "#7E746D",
+          700: "#887E76",
+          600: "#918880",
+          500: "#A49B95",
+          400: "#B6AFAA",
+          300: "#C8C3BF",
+          200: "#DAD7D4",
+          100: "#ECEBE9",
+          50: "#F5F5F4",
+        },
+      },
+    },
+  },
+  plugins: [],
+}
