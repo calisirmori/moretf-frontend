@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import LogHeader from "../components/logs/LogHeader";
 import LogStatsTable from "../components/logs/LogStatsTable";
+import LogsTeamStatsTable from "../components/logs/LogsTeamStatsTable";
+import LogsRoundStatsTable from "../components/logs/LogsRoundStatsTable";
 
 interface Props {
   logId: string;
@@ -28,7 +30,8 @@ export default function LogPage({ logId }: Props) {
       <div className="min-h-screen max-w-7xl w-full">
         <LogHeader info={data.info} />
         <LogStatsTable data={data.players} gameLengthMinutes={data.info.durationSeconds / 60} />
-
+        <LogsTeamStatsTable data={data.teams} />
+        <LogsRoundStatsTable data={data.rounds} />
         <div className="mt-6">
           <pre className="bg-gray-900 p-4 rounded text-xs overflow-auto">
             {JSON.stringify(data, null, 2)}
