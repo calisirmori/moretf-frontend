@@ -28,15 +28,12 @@ export default function LogPage({ logId }: Props) {
       <div className="min-h-screen max-w-7xl w-full">
         <LogHeader info={data.info} />
         <LogStatsTable data={data.players} gameLengthMinutes={data.info.durationSeconds / 60} />
-        {/* Future: pass other props to team/player components */}
-        {/* <TeamStats red={data.red} blue={data.blue} /> */}
-        {/* <PlayerTable players={data.players} /> */}
 
-        {/* <div className="mt-6">
+        <div className="mt-6">
           <pre className="bg-gray-900 p-4 rounded text-xs overflow-auto">
             {JSON.stringify(data, null, 2)}
           </pre>
-        </div> */}
+        </div>
       </div>
     </div>
   );
