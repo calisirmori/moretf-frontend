@@ -17,7 +17,7 @@ export default function LogPage({ logId }: Props) {
   const [selectedTab, setSelectedTab] = useState<string>("BOX SCORE");
 
   useEffect(() => {
-    fetch(`http://localhost:8080/log/${logId}`)
+    fetch(`https://api.more.tf/log/${logId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch log");
         return res.json();
