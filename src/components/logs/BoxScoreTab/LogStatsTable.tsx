@@ -37,6 +37,11 @@ interface PlayerStats {
     healing: number;
     ubers: number;
     drops: number;
+    airShots: number;
+    backStabs: number;
+    headShots: number;
+    captures: number;
+    itemPickups: Record<string, number> | null;
     classStats: Record<string, { classType: string; totalTime: number }> | null;
 }
 
@@ -68,7 +73,7 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
         {data.map((p, i) => (
             <tr
                 key={i}
-                className={`border-b border-warm-500/20 dark:border-light-400/10 ${i % 2 === 0 ? "bg-light-200/40 dark:bg-warm-800/40 " : ""}`}
+                className={`border-b max-md:text-xs border-warm-500/20 dark:border-light-400/10 ${i % 2 === 0 ? "bg-light-200/40 dark:bg-warm-800/40 " : ""}`}
             >
                 <td className={`w-8 text-xs text-center uppercase font-bold pr-2 text-light-50/80 border-b ${p.team == "Blue" ? " bg-brand-blue border-brand-blue-dark" : "bg-brand-red border-brand-red-dark"}`}>{p.team == "Red" ? "Red" : "Blu"}</td>
                 <td className="py-1.5 ml-2 border-r border-light-500/20 dark:border-warm-500/80 pr-2 flex items-center gap-2 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
@@ -79,7 +84,7 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
                         ? Object.values(p.classStats)
                             .filter((cls: any) => cls.totalTime > 30)
                             .sort((a: any, b: any) => b.totalTime - a.totalTime)
-                            .map((cls: any, index: number, arr: any[]) => {
+                            .map((cls: any, arr: any[]) => {
                                 const opacity = (cls.totalTime / arr[0].totalTime).toFixed(2);
                                 return (
                                     <img
@@ -111,18 +116,25 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
 
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.damageTaken === "number" ? p.damageTaken : "-"}</td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.damageTaken === "number" ? (p.damageTaken / gameLengthMinutes).toFixed(0) : "-"}</td>
-                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.drops === "number" ? p.drops : "-"}</td>
-                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.drops === "number" ? p.drops : "-"}</td>
-                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.drops === "number" ? p.drops : "-"}</td>
-                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.drops === "number" ? p.drops : "-"}</td>
-                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.drops === "number" ? p.drops : "-"}</td>
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">
+                  {p.itemPickups
+                    ? ((p.itemPickups["medkit_small"] || 0) * 1 +
+                       (p.itemPickups["medkit_medium"] || 0) * 2 +
+                       (p.itemPickups["medkit_large"] || 0) * 4)
+                    : 0}
+                </td>
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.backStabs === "number" ? p.backStabs : "-"}</td>
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.headShots === "number" ? p.headShots : "-"}</td>
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.airShots === "number" ? p.airShots : "-"}</td>
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.captures === "number" ? p.captures : "-"}</td>
             </tr>
         ))}
     </tbody>
 );
 
 const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
-    const [sortKey, setSortKey] = useState<keyof PlayerStats | "teamClass">("teamClass");
+    type SortableKeys = keyof PlayerStats | "teamClass" | "healthPickups" | "kda" | "kdr";
+    const [sortKey, setSortKey] = useState<keyof PlayerStats | "teamClass" | "healthPickups">("teamClass");
     type SortDirection = "desc" | "asc" | "default";
     const [sortDirection, setSortDirection] = useState<SortDirection>("default");
 
@@ -134,7 +146,7 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                 return getClassOrderIndex(a.character || "") - getClassOrderIndex(b.character || "");
             }
 
-            const getValue = (p: PlayerStats, key: keyof PlayerStats | "teamClass") => {
+            const getValue = (p: PlayerStats, key: keyof PlayerStats | "teamClass" | "healthPickups") => {
                 if (key === "kda") {
                     const { kills, assists, deaths } = p;
                     if (typeof kills === "number" && typeof assists === "number" && typeof deaths === "number") {
@@ -153,6 +165,12 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                     const classRank = getClassOrderIndex(p.character || "");
                     const teamRank = p.team === "Blue" ? 0 : 1; // blue first
                     return classRank * 10 + teamRank;
+                } 
+                if (key === "healthPickups") {
+                  const small = p.itemPickups?.["medkit_small"] || 0;
+                  const med = p.itemPickups?.["medkit_medium"] || 0;
+                  const large = p.itemPickups?.["medkit_large"] || 0;
+                  return small * 1 + med * 2 + large * 4;
                 }
                 return p[key as keyof PlayerStats];
             };
@@ -172,9 +190,9 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
 
 
     const renderSortableHeader = (
-        key: keyof PlayerStats | "teamClass",
-        label: string,
-        small: boolean
+      key: keyof PlayerStats | "teamClass" | "healthPickups",
+      label: string,
+      small: boolean
     ) => {
         const handleClick = () => {
             if (sortKey === key) {
@@ -211,7 +229,7 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
 
 
     return (
-        <div className="text-warm-800 dark:text-light-50 bg-light-100/50 dark:bg-warm-800/60 p-4 font-ttnorms ">
+        <div className="text-warm-800 dark:text-light-50 bg-light-100/50 dark:bg-warm-800/60 p-4 font-ttnorms px-10 pt-10">
             <div
                 className="relative overflow-x-auto hide-scrollbar cursor-grab active:cursor-grabbing lg:hidden"
                 onMouseDown={(e) => {
@@ -248,11 +266,11 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                             {renderSortableHeader("kdr", "K/D", false)}
                             {renderSortableHeader("damageTaken", "DT", false)}
                             {renderSortableHeader("damageTaken", "DTM", false)}
-                            {renderSortableHeader("drops", "HP", true)}
-                            {renderSortableHeader("drops", "AP", true)}
-                            {renderSortableHeader("drops", "OD", true)}
-                            {renderSortableHeader("drops", "OB", true)}
-                            {renderSortableHeader("drops", "CAP", true)}
+                            {renderSortableHeader("healthPickups", "HP", true)}
+                            {renderSortableHeader("backStabs", "BS", true)}
+                            {renderSortableHeader("headShots", "HS", true)}
+                            {renderSortableHeader("airShots", "AS", true)}
+                            {renderSortableHeader("captures", "CAP", true)}
                         </tr>
                     </thead>
                     <TableBody data={sortedData} gameLengthMinutes={gameLengthMinutes} />
@@ -274,11 +292,11 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                         {renderSortableHeader("kdr", "K/D", false)}
                         {renderSortableHeader("damageTaken", "DT", false)}
                         {renderSortableHeader("damageTaken", "DTM", false)}
-                        {renderSortableHeader("drops", "HP", true)}
-                        {renderSortableHeader("drops", "AP", true)}
-                        {renderSortableHeader("drops", "OD", true)}
-                        {renderSortableHeader("drops", "OB", true)}
-                        {renderSortableHeader("drops", "CAP", true)}
+                        {renderSortableHeader("healthPickups", "HP", true)}
+                        {renderSortableHeader("backStabs", "BS", true)}
+                        {renderSortableHeader("headShots", "HS", true)}
+                        {renderSortableHeader("airShots", "AS", true)}
+                        {renderSortableHeader("captures", "CAP", true)}
                     </tr>
                 </thead>
                 <TableBody data={sortedData} gameLengthMinutes={gameLengthMinutes} />
