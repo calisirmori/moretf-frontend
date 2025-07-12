@@ -84,7 +84,7 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
                         ? Object.values(p.classStats)
                             .filter((cls: any) => cls.totalTime > 30)
                             .sort((a: any, b: any) => b.totalTime - a.totalTime)
-                            .map((cls: any, arr: any[]) => {
+                            .map((cls: any, arr: any) => {
                                 const opacity = (cls.totalTime / arr[0].totalTime).toFixed(2);
                                 return (
                                     <img
@@ -133,7 +133,6 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
 );
 
 const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
-    type SortableKeys = keyof PlayerStats | "teamClass" | "healthPickups" | "kda" | "kdr";
     const [sortKey, setSortKey] = useState<keyof PlayerStats | "teamClass" | "healthPickups">("teamClass");
     type SortDirection = "desc" | "asc" | "default";
     const [sortDirection, setSortDirection] = useState<SortDirection>("default");
