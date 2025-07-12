@@ -57,11 +57,11 @@ export default function LogPage({ logId }: Props) {
           <PlayByPlayTable events={data.playByPlay} />
         )}
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <pre className="bg-gray-900 p-4 rounded text-xs overflow-auto">
             {JSON.stringify(data, null, 2)}
           </pre>
-        </div>
+        </div> */}
       </div>
     </div>
   );

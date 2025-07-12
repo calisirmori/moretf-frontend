@@ -81,22 +81,27 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
                 </td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">
                     {p.classStats
-                        ? Object.values(p.classStats)
-                            .filter((cls: any) => cls.totalTime > 30)
-                            .sort((a: any, b: any) => b.totalTime - a.totalTime)
-                            .map((cls: any, arr: any) => {
-                                const opacity = (cls.totalTime / arr[0].totalTime).toFixed(2);
-                                return (
-                                    <img
-                                        key={cls.classType}
-                                        src={`/classIcons/${getClassIconFilename(cls.classType)}`}
-                                        alt={cls.classType}
-                                        className="inline-block w-5 h-5 mr-1"
-                                        style={{ opacity }}
-                                    />
-                                );
-                            })
-                        : "-"}
+                      ? (() => {
+                          const classArr = Object.values(p.classStats).filter(cls => cls.totalTime > 30);
+                          if (classArr.length === 0) return "-";
+                          classArr.sort((a, b) => b.totalTime - a.totalTime);
+                          const mostPlayedTime = classArr[0].totalTime;
+                    
+                          return classArr.map(cls => {
+                            const opacity = (cls.totalTime / mostPlayedTime).toFixed(2);
+                            return (
+                              <img
+                                key={cls.classType}
+                                src={`/classIcons/${getClassIconFilename(cls.classType)}`}
+                                alt={cls.classType}
+                                className="inline-block w-5 h-5 mr-1"
+                                style={{ opacity }}
+                              />
+                            );
+                          });
+                        })()
+                      : "-"
+                      }
                 </td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.kills === "number" ? p.kills : "-"}</td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.deaths === "number" ? p.deaths : "-"}</td>
