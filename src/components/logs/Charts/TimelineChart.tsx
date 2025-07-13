@@ -7,6 +7,7 @@ import {
   Tooltip,
   CategoryScale,
   Filler,
+  LineController,
 } from "chart.js";
 
 import type { ChartOptions } from "chart.js";
@@ -15,6 +16,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "chartjs-adapter-date-fns";
 
 ChartJS.register(
+  LineController,
   LineElement,
   PointElement,
   LinearScale,
