@@ -6,6 +6,7 @@ import LogsRoundStatsTable from "../components/logs/BoxScoreTab/LogsRoundStatsTa
 import LogKillsByClass from "../components/logs/BoxScoreTab/LogKillsByClass";
 import LogsTabs from "../components/logs/LogsTabs";
 import PlayByPlayTable from "../components/logs/PlayByPlayTab/PlayByPlayTable";
+import TeamPerformanceChart from "../components/logs/Charts/TimelineChart";
 
 interface Props {
   logId: string;
@@ -48,9 +49,7 @@ export default function LogPage({ logId }: Props) {
         )}
 
         {selectedTab === "CHARTS" && (
-          <div className="mt-6 text-center text-light-100">
-            Charts section coming soon.
-          </div>
+          <TeamPerformanceChart timeline={data.timeline} />
         )}
 
         {selectedTab === "PLAY-BY-PLAY" && (
