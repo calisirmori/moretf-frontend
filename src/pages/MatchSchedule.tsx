@@ -134,7 +134,7 @@ export default function MatchSchedule() {
           {isCalendarOpen && (
             <div
               ref={calendarRef}
-              className="absolute top-14 left-0 p-2 bg-light-200 dark:bg-warm-800 rounded-sm flex-col justify-center items-center w-fit"
+              className="absolute border border-warm-400/50 z-10 top-14 left-0 p-2 bg-light-200 dark:bg-warm-800 rounded-sm flex-col justify-center items-center w-fit"
             >
               <div className="flex justify-center items-center gap-2 w-full mb-2">
                 <button
