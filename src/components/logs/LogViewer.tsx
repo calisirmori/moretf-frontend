@@ -9,7 +9,7 @@ export default function LogViewer({ logId }: Props) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(`http://localhost:8080/log/${logId}`)
+    fetch(`https://api.more.tf/log/${logId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch log")
         return res.json()
