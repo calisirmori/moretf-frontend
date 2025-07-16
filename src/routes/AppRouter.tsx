@@ -5,6 +5,7 @@ import Footer from "../components/common/Footer"
 import LogPageWrapper from "../pages/LogPageWrapper"
 import MatchSchedule from "../pages/MatchSchedule"
 import MatchTicker from "../components/common/MatchTicker"
+import Profile from "../pages/Profile";
 
 function AppWithLayout() {
   const { pathname } = useLocation();
@@ -19,6 +20,7 @@ function AppWithLayout() {
         <Route path="/" element={<Home />} />
         <Route path="/log/:logId" element={<LogPageWrapper />} />
         <Route path="/matches" element={<MatchSchedule />} />
+        <Route path="/profile/:playerId/*" element={<Profile />} />
       </Routes>
       <Footer />
     </>
@@ -29,12 +31,7 @@ export default function AppRouter() {
   return (
     <div className="font-ttnorms">
       <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/log/:logId" element={<LogPageWrapper />} />
-        </Routes>
-        <Footer />
+        <AppWithLayout />
       </BrowserRouter>
     </div>
   );

@@ -1,16 +1,37 @@
 import { useState } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
-const tabs = ['Overview', 'Matches', 'Peers', 'Activity', 'Gallery'];
+const tabs = ['overview', 'matches', 'peers', 'activity', 'gallery'];
 
 export default function ProfileHeader({ profile }: { profile: any }) {
+  const [copied, setCopied] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('Overview');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentTab = (location.pathname.split('/')[3] || 'overview').toLowerCase();
+  const { playerId } = useParams();
+
+  if (!playerId) return <div>Invalid profile link</div>;
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(`https://more.tf/profile/${playerId}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handleTabClick = (tab: string) => {
+    if (tab !== currentTab) {
+      navigate(`/profile/${playerId}/${tab}`, { replace: true });
+    }
+  };
 
   const avatarUrl = `https://avatars.fastly.steamstatic.com/${profile.avatar}_full.jpg`;
   profile.flag = 'us'
   profile.badge1 = '111'
   profile.badge2 = '222'
   profile.badge3 = '333'
+  profile.youtubeUrl = 'https://youtube.com/somechannel';
+  profile.twitchUrl = 'https://twitch.tv/somechannel';
 
   return (
     <div
@@ -44,49 +65,93 @@ export default function ProfileHeader({ profile }: { profile: any }) {
                 )}
               </div>
             </div>
-            <div className="flex  gap-2 border">
-              {/* Twitter */}
-              <div className="w-9 h-9 bg-[#1DA1F2] hover:bg-[#1A91DA] rounded-md flex justify-center items-center cursor-pointer">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.4 1s-1.64.98-2.6 1.26a4.48 4.48 0 0 0-7.6 4.1A12.94 12.94 0 0 1 3 2s-4 9 5 13a13 13 0 0 1-8 2c11 6 24 0 24-13.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
-                </svg>
-              </div>
+            <div className="flex gap-2 mr-3 -mb-7">
+              {/* OZ */}
+              <a
+                href={`https://ozfortress.com/users?utf8=✓&q=${playerId}&button=`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-warm-800 bg-warm-700 hover:bg-warm-800 bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+              >
+                <img src="/websiteLogos/ozf.png" alt="OZ Icon" className="w-5 h-5 object-contain" />
+              </a>
 
-              {/* Twitch */}
-              <div className="w-9 h-9 bg-[#6441A4] hover:bg-[#6441A4] rounded-md flex justify-center items-center cursor-pointer">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
+              {/* RGL */}
+              <a
+                href={`https://rgl.gg/Public/PlayerProfile?p=${playerId}&r=24`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-warm-800 bg-warm-700 hover:bg-warm-800 bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+              >
+                <img src="/websiteLogos/rgl.png" alt="RGL Icon" className="w-5 h-5" />
+              </a>
+
+              {/* ETF2L */}
+              <a
+                href={`https://etf2l.org/search/${playerId}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-[#141f29] bg-[#233240] hover:bg-[#141f29] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+              >
+                <img src="/websiteLogos/etf2l-white.png" alt="ETF2L Icon" className="w-5 h-5" />
+              </a>
+
+              {/* Steam */}
+              <a
+                href={`https://steamcommunity.com/profiles/${playerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-[#162942] bg-[#133562] hover:bg-[#162942] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+              >
+                <img src="/websiteLogos/steam-icon.svg" alt="Steam Icon" className="w-5 h-5" />
+              </a>
+
+              {/* YouTube (optional) */}
+              {profile.youtubeUrl && (
+                <a
+                  href={profile.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 border border-[#9c001f] bg-[#ff0033] hover:bg-[#9c001f] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
                 >
-                  <path d="M4.265 0L0 4.265v15.47h5.8V24l4.265-4.265h3.93L24 13.194V0H4.265zM21.43 12.007l-3.404 3.404h-4.552l-2.85 2.849v-2.849H5.801V1.838h15.63v10.169zm-3.76-6.136h-1.704v5.113h1.704V5.871zm-4.334 0h-1.704v5.113h1.704V5.871z" />
-                </svg>
-              </div>
+                  <img src="/websiteLogos/youtube-icon.svg" alt="YouTube Icon" className="w-5 h-5" />
+                </a>
+              )}
+
+              {/* Twitch (optional) */}
+              {profile.twitchUrl && (
+                <a
+                  href={profile.twitchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 border border-[#513488] bg-[#6441A4] hover:bg-[#513488] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+                >
+                  <img src="/websiteLogos/twitch-icon.svg" alt="Twitch Icon" className="w-5 h-5" />
+                </a>
+              )}
 
               {/* Share */}
-              <div className="w-9 h-9 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-md flex justify-center items-center cursor-pointer">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.5 2.5 0 0 0 0-1.39l7.05-4.11A2.5 2.5 0 1 0 14.5 5c0 .17.02.33.05.5L7.5 9.61a2.5 2.5 0 1 0 0 4.78l7.05 4.11c-.03.16-.05.33-.05.5a2.5 2.5 0 1 0 2.5-2.5z" />
-                </svg>
+              <div
+                onClick={copyLink}
+                className="w-9 h-9 border border-light-50/20 hover:border-light-50/30 bg-light-50/10 hover:bg-light-50/20 duration-300 rounded-sm flex justify-center items-center cursor-pointer relative"
+              >
+                <img src="/websiteLogos/share-icon.svg" alt="Share Icon" className="w-5 h-5" />
+                {copied && (
+                  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
+                    Copied!
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          <div className="w-full h-16 bg-warm-800/90 backdrop-blur-sm">
-            <div className="ml-48 h-16 grid grid-cols-5 text-light-500 font-medium">
+          <div className="w-full h-16 bg-light-100/40 dark:bg-warm-800/90 backdrop-blur-sm">
+            <div className="ml-48 h-16 grid grid-cols-5  text-warm-400 dark:text-light-500 font-medium text-lg">
               {tabs.map((tab) => (
                 <div
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex justify-center items-center border-b-2 h-16 px-4
-                  ${activeTab === tab ? 'border-brand-orange cursor-default text-light-100' : 'border-transparent hover:border-brand-orange cursor-pointer'}`}
+                  onClick={() => handleTabClick(tab)}
+                  className={`capitalize flex justify-center items-center border-b-2 h-16 px-4
+              ${currentTab === tab ? 'border-brand-orange cursor-default font-bold text-warm-800 dark:text-light-100' : 'border-transparent hover:border-brand-orange dark:hover:border-brand-orange cursor-pointer'}`}
                 >
                   {tab}
                 </div>

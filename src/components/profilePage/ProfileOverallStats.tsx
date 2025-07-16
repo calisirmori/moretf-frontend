@@ -1,10 +1,33 @@
 export default function ProfileOverallStats({ overallStats }: { overallStats: any }) {
+  const winrate = parseFloat((overallStats.wins / overallStats.count * 100).toFixed(1));
   return (
-    <div className="bg-dark p-4 rounded">
-      <h3 className="text-lg font-semibold mb-2">Overall Stats</h3>
-      <p>Total Matches: {overallStats.count}</p>
-      <p>Win Rate: {(overallStats.win_rate * 100).toFixed(1)}%</p>
-      <p>Time Played: {Math.round(overallStats.time_played / 60)} hrs</p>
-    </div>
+    <div className="grid max-md:grid-rows-2 md:grid-cols-2 gap-2 max-md:h-36 md:h-16 text-warm-800 dark:text-light-100">
+      <div className="dark:bg-warm-800 bg-light-200 h-full rounded-md">
+        <div className="flex justify-center items-center h-full w-full">
+          <div className="flex-col p-3 w-full">
+            <div className="text-xl font-medium"><span className="text-brand-orange">{overallStats.count ?? 0}</span> Matches</div>
+            <div className="bg-brand-orange h-2 rounded-sm mt-2"></div>
+          </div>
+        </div>
+      </div>
+      <div className="dark:bg-warm-800 bg-light-200 h-full rounded-md">
+        <div className="flex justify-center items-center h-full w-full">
+          <div className="flex-col p-3 w-full">
+            <div className="text-xl font-medium">
+              <span className={winrate >= 50 ? "text-green-600" : "text-brand-red"}>
+                {winrate}%
+              </span> Winrate
+            </div>
+            <div className="w-full dark:bg-warm-700 bg-light-100 h-2 rounded-sm mt-2 overflow-hidden">
+              <div
+                className={`h-full transition-all rounded-sm duration-300 ${winrate >= 50 ? 'bg-green-600' : 'bg-brand-red-dark'}`}
+                style={{ width: `${winrate}%` }}
+              ></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div >
   );
 }

@@ -28,7 +28,6 @@ export default function ProfileClassStats({ stats }: Props) {
             <span className="capitalize">{className}</span>
             <span>
               {data.count} games, {data.wins}W {data.loss}L {data.ties}T, {secondsToMinutes(data.classTime ?? 0)}
-
             </span>
           </li>
         ))}
