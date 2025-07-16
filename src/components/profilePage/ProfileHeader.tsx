@@ -117,7 +117,7 @@ export default function ProfileHeader({ profile }: { profile: any }) {
 
   return (
     <div
-      className="w-full relative rounded-md h-80 bg-cover bg-center bg-no-repeat z-10"
+      className="w-full relative rounded-md max-md:h-40 md:h-80 bg-cover bg-center bg-no-repeat z-10"
       style={{
         backgroundImage:
           "url('https://images.steamusercontent.com/ugc/22838588343528740/2DC75BCCF3383C46478F6645741FAF8B6D1C58B4/')",
@@ -129,9 +129,9 @@ export default function ProfileHeader({ profile }: { profile: any }) {
       {/* Content above background */}
       <div className="w-full h-full flex items-end  ">
         <div className="w-full flex-col">
-          <div className="ml-48 mb-3 flex justify-between items-center">
+          <div className=" max-md:ml-28 md:ml-48 md:mb-3 flex justify-between items-center">
             <div className='flex'>
-              <div className=" text-6xl font-medium text-light-100">{profile.steamName}</div>
+              <div className=" max-md:text-2xl md:text-6xl font-medium text-light-100">{profile.steamName}</div>
               {/* Badges */}
               <div className="flex ml-1 items-center">
                 {[profile.badge1, profile.badge2, profile.badge3].map(
@@ -141,7 +141,7 @@ export default function ProfileHeader({ profile }: { profile: any }) {
                         key={index}
                         src={`/badges/${badge}.png`}
                         alt={`Badge ${badge}`}
-                        className="w-8 h-8 rounded-sm"
+                        className="max-md:w-4 max-md:h-4 md:w-8 md:h-8 rounded-sm"
                       />
                     )
                 )}
@@ -156,7 +156,7 @@ export default function ProfileHeader({ profile }: { profile: any }) {
             <div className="relative md:hidden">
               <button
                 onClick={toggleDropdown}
-                className="px-3 py-2 text-sm bg-light-50/10 text-white border border-light-50/20 rounded-sm mr-3"
+                className="px-2 py-1.5 mb-1 text-sm bg-light-50/10 text-white border border-light-50/20 rounded-sm mr-3"
               >
                 Links ▾
               </button>
@@ -170,25 +170,43 @@ export default function ProfileHeader({ profile }: { profile: any }) {
 
           </div>
           <div className="w-full rounded-b-md h-16 bg-light-100/40 dark:bg-warm-800/90 backdrop-blur-sm">
-            <div className="ml-48 h-16 grid grid-cols-5  text-warm-400 dark:text-light-500 font-medium text-lg">
+            {/* Desktop Tabs */}
+            <div className="hidden sm:grid sm:ml-28  md:ml-48 h-16 grid-cols-5 text-warm-400 dark:text-light-500 font-medium text-lg">
               {tabs.map((tab) => (
                 <div
                   key={tab}
                   onClick={() => handleTabClick(tab)}
                   className={`capitalize flex justify-center items-center border-b-2 h-16 px-4
-              ${currentTab === tab ? 'border-brand-orange cursor-default font-bold text-warm-800 dark:text-light-100' : 'border-transparent hover:border-brand-orange dark:hover:border-brand-orange cursor-pointer'}`}
+        ${currentTab === tab
+                      ? 'border-brand-orange cursor-default font-bold text-warm-800 dark:text-light-100'
+                      : 'border-transparent hover:border-brand-orange dark:hover:border-brand-orange cursor-pointer'}`}
                 >
                   {tab}
                 </div>
               ))}
             </div>
+
+            {/* Mobile Dropdown */}
+            <div className="sm:hidden ml-28 mb-3 px-2 flex  justify-center items-center h-full">
+              <select
+                value={currentTab}
+                onChange={(e) => handleTabClick(e.target.value)}
+                className="bg-warm-800 text-light-100  px-4 py-2 rounded-sm border border-light-50/20"
+              >
+                {tabs.map((tab) => (
+                  <option key={tab} value={tab} className='text-xs '>
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="absolute left-12 bottom-7 ">
+          <div className="absolute max-md:left-8 md:left-12 bottom-7 ">
             <div>
               <img
                 src={avatarUrl}
                 alt="Player Avatar"
-                className="w-28 h-28 rounded-full border-4 border-light-200"
+                className="max-md:w-16 max-md:h-16 md:w-28 md:h-28 rounded-full border-4 border-light-200"
               />
             </div>
             <div className="">
@@ -196,7 +214,7 @@ export default function ProfileHeader({ profile }: { profile: any }) {
                 <img
                   src={`https://flagcdn.com/w40/${profile.flag.toLowerCase()}.png`}
                   alt={profile.flag}
-                  className="absolute bottom-3 right-0 w-[30px] h-[20px] rounded-sm border border-warm-800"
+                  className="absolute  max-md:bottom-1 md:bottom-3 right-0 max-md:w-[24px] md:w-[30px] max-md:h-[16px] md:h-[20px] rounded-sm border border-warm-800"
                 />
               )}
             </div>

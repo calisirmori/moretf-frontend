@@ -9,23 +9,19 @@ import type { UserProfileDTO } from '../../../types/UserProfileDTO';
 
 export default function OverviewTab({ data }: { data: UserProfileDTO }) {
     return (
-        <div className="max-md:flex-col md:grid md:grid-cols-[2fr_1fr]">
-            <div className='flex flex-col gap-3'>
+        <div className="max-md:flex-col md:grid md:grid-cols-[2fr_1fr] gap-2">
+            <div className='flex flex-col space-y-2'>
                 <ProfileOverallStats overallStats={data.overallStats} />
                 <ProfileRecentMatches matches={data.recentMatches} />
+                <ProfileClassStats stats={data.classStats} />
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <div className="col-span-2 space-y-6">
-                    <ProfileActivityView activity={data.activity} />
-                </div>
-                <div className="space-y-6">
-                    <ProfileMapStats stats={data.mapStats} />
-                    <ProfileClassStats stats={data.classStats} />
-                    <ProfileTopPeers
-                        topPeers={data.topPeers}
-                        topEnemies={data.topEnemies}
-                    />
-                </div>
+            <div className="flex-col space-y-2 max-md:mt-3">
+                <ProfileMapStats stats={data.mapStats} />
+                <ProfileActivityView activity={data.activity} />
+                <ProfileTopPeers
+                    topPeers={data.topPeers}
+                    topEnemies={data.topEnemies}
+                />
             </div>
         </div>
     );

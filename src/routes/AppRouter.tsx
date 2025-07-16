@@ -6,6 +6,7 @@ import LogPageWrapper from "../pages/LogPageWrapper"
 import MatchSchedule from "../pages/MatchSchedule"
 import MatchTicker from "../components/common/MatchTicker"
 import Profile from "../pages/Profile";
+import MatchesTab from "../components/profilePage/tabs/MatchesTab";
 
 function AppWithLayout() {
   const { pathname } = useLocation();
@@ -21,6 +22,7 @@ function AppWithLayout() {
         <Route path="/log/:logId" element={<LogPageWrapper />} />
         <Route path="/matches" element={<MatchSchedule />} />
         <Route path="/profile/:playerId/*" element={<Profile />} />
+        <Route path="/test" element={<MatchesTab />} />
       </Routes>
       <Footer />
     </>
