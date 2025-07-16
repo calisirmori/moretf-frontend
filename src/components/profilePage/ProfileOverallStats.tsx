@@ -2,7 +2,7 @@ export default function ProfileOverallStats({ overallStats }: { overallStats: an
   const winrate = parseFloat((overallStats.wins / overallStats.count * 100).toFixed(1));
   return (
     <div className="grid max-md:grid-rows-2 md:grid-cols-2 gap-2 max-md:h-36 md:h-16 text-warm-800 dark:text-light-100">
-      <div className="dark:bg-warm-800 bg-light-200 h-full rounded-md">
+      <div className="dark:bg-warm-800 bg-light-100 h-full rounded-md">
         <div className="flex justify-center items-center h-full w-full">
           <div className="flex-col p-3 w-full">
             <div className="text-xl font-medium"><span className="text-brand-orange">{overallStats.count ?? 0}</span> Matches</div>
@@ -10,7 +10,7 @@ export default function ProfileOverallStats({ overallStats }: { overallStats: an
           </div>
         </div>
       </div>
-      <div className="dark:bg-warm-800 bg-light-200 h-full rounded-md">
+      <div className="dark:bg-warm-800 bg-light-100 h-full rounded-md">
         <div className="flex justify-center items-center h-full w-full">
           <div className="flex-col p-3 w-full">
             <div className="text-xl font-medium">

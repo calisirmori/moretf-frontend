@@ -9,7 +9,7 @@ import type { UserProfileDTO } from '../../../types/UserProfileDTO';
 
 export default function OverviewTab({ data }: { data: UserProfileDTO }) {
     return (
-        <div className="grid grid-cols-[2fr_1fr]">
+        <div className="max-md:flex-col md:grid md:grid-cols-[2fr_1fr]">
             <div className='flex flex-col gap-3'>
                 <ProfileOverallStats overallStats={data.overallStats} />
                 <ProfileRecentMatches matches={data.recentMatches} />

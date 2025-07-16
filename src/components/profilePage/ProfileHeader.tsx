@@ -5,6 +5,8 @@ const tabs = ['overview', 'matches', 'peers', 'activity', 'gallery'];
 
 export default function ProfileHeader({ profile }: { profile: any }) {
   const [copied, setCopied] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,20 +34,100 @@ export default function ProfileHeader({ profile }: { profile: any }) {
   profile.badge3 = '333'
   profile.youtubeUrl = 'https://youtube.com/somechannel';
   profile.twitchUrl = 'https://twitch.tv/somechannel';
+  const renderIcons = () => (
+    <>
+      {/* OZ */}
+      <a
+        href={`https://ozfortress.com/users?utf8=✓&q=${playerId}&button=`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-9 h-9 border border-warm-800 bg-warm-700 hover:bg-warm-800 bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+      >
+        <img src="/websiteLogos/ozf.png" alt="OZ Icon" className="w-5 h-5 object-contain" />
+      </a>
+
+      {/* RGL */}
+      <a
+        href={`https://rgl.gg/Public/PlayerProfile?p=${playerId}&r=24`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-9 h-9 border border-warm-800 bg-warm-700 hover:bg-warm-800 bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+      >
+        <img src="/websiteLogos/rgl.png" alt="RGL Icon" className="w-5 h-5" />
+      </a>
+
+      {/* ETF2L */}
+      <a
+        href={`https://etf2l.org/search/${playerId}/`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-9 h-9 border border-[#141f29] bg-[#233240] hover:bg-[#141f29] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+      >
+        <img src="/websiteLogos/etf2l-white.png" alt="ETF2L Icon" className="w-5 h-5" />
+      </a>
+
+      {/* Steam */}
+      <a
+        href={`https://steamcommunity.com/profiles/${playerId}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-9 h-9 border border-[#162942] bg-[#133562] hover:bg-[#162942] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+      >
+        <img src="/websiteLogos/steam-icon.svg" alt="Steam Icon" className="w-5 h-5" />
+      </a>
+
+      {/* YouTube */}
+      {profile.youtubeUrl && (
+        <a
+          href={profile.youtubeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-9 h-9 border border-[#9c001f] bg-[#ff0033] hover:bg-[#9c001f] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+        >
+          <img src="/websiteLogos/youtube-icon.svg" alt="YouTube Icon" className="w-5 h-5" />
+        </a>
+      )}
+
+      {/* Twitch */}
+      {profile.twitchUrl && (
+        <a
+          href={profile.twitchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-9 h-9 border border-[#513488] bg-[#6441A4] hover:bg-[#513488] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
+        >
+          <img src="/websiteLogos/twitch-icon.svg" alt="Twitch Icon" className="w-5 h-5" />
+        </a>
+      )}
+
+      {/* Share */}
+      <div
+        onClick={copyLink}
+        className="w-9 h-9 border border-light-50/20 hover:border-light-50/30 bg-light-50/10 hover:bg-light-50/20 duration-300 rounded-sm flex justify-center items-center cursor-pointer relative"
+      >
+        <img src="/websiteLogos/share-icon.svg" alt="Share Icon" className="w-5 h-5" />
+        {copied && (
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
+            Copied!
+          </div>
+        )}
+      </div>
+    </>
+  );
 
   return (
     <div
-      className="w-full relative rounded-t-md h-80 bg-cover bg-center bg-no-repeat z-10"
+      className="w-full relative rounded-md h-80 bg-cover bg-center bg-no-repeat z-10"
       style={{
         backgroundImage:
           "url('https://images.steamusercontent.com/ugc/22838588343528740/2DC75BCCF3383C46478F6645741FAF8B6D1C58B4/')",
       }}
     >
       {/* Optional overlay for darkening */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-t-md -z-10" />
+      <div className="absolute inset-0 rounded-md bg-black bg-opacity-50 rounded-t-md -z-10" />
 
       {/* Content above background */}
-      <div className="w-full h-full flex items-end ">
+      <div className="w-full h-full flex items-end  ">
         <div className="w-full flex-col">
           <div className="ml-48 mb-3 flex justify-between items-center">
             <div className='flex'>
@@ -65,86 +147,29 @@ export default function ProfileHeader({ profile }: { profile: any }) {
                 )}
               </div>
             </div>
-            <div className="flex gap-2 mr-3 -mb-7">
-              {/* OZ */}
-              <a
-                href={`https://ozfortress.com/users?utf8=✓&q=${playerId}&button=`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 border border-warm-800 bg-warm-700 hover:bg-warm-800 bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
-              >
-                <img src="/websiteLogos/ozf.png" alt="OZ Icon" className="w-5 h-5 object-contain" />
-              </a>
-
-              {/* RGL */}
-              <a
-                href={`https://rgl.gg/Public/PlayerProfile?p=${playerId}&r=24`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 border border-warm-800 bg-warm-700 hover:bg-warm-800 bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
-              >
-                <img src="/websiteLogos/rgl.png" alt="RGL Icon" className="w-5 h-5" />
-              </a>
-
-              {/* ETF2L */}
-              <a
-                href={`https://etf2l.org/search/${playerId}/`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 border border-[#141f29] bg-[#233240] hover:bg-[#141f29] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
-              >
-                <img src="/websiteLogos/etf2l-white.png" alt="ETF2L Icon" className="w-5 h-5" />
-              </a>
-
-              {/* Steam */}
-              <a
-                href={`https://steamcommunity.com/profiles/${playerId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 border border-[#162942] bg-[#133562] hover:bg-[#162942] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
-              >
-                <img src="/websiteLogos/steam-icon.svg" alt="Steam Icon" className="w-5 h-5" />
-              </a>
-
-              {/* YouTube (optional) */}
-              {profile.youtubeUrl && (
-                <a
-                  href={profile.youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 border border-[#9c001f] bg-[#ff0033] hover:bg-[#9c001f] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
-                >
-                  <img src="/websiteLogos/youtube-icon.svg" alt="YouTube Icon" className="w-5 h-5" />
-                </a>
-              )}
-
-              {/* Twitch (optional) */}
-              {profile.twitchUrl && (
-                <a
-                  href={profile.twitchUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 border border-[#513488] bg-[#6441A4] hover:bg-[#513488] bg-opacity-80 rounded-sm duration-300 flex justify-center items-center cursor-pointer"
-                >
-                  <img src="/websiteLogos/twitch-icon.svg" alt="Twitch Icon" className="w-5 h-5" />
-                </a>
-              )}
-
-              {/* Share */}
-              <div
-                onClick={copyLink}
-                className="w-9 h-9 border border-light-50/20 hover:border-light-50/30 bg-light-50/10 hover:bg-light-50/20 duration-300 rounded-sm flex justify-center items-center cursor-pointer relative"
-              >
-                <img src="/websiteLogos/share-icon.svg" alt="Share Icon" className="w-5 h-5" />
-                {copied && (
-                  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
-                    Copied!
-                  </div>
-                )}
-              </div>
+            {/* ICONS - DESKTOP INLINE */}
+            <div className="gap-2 mr-3 -mb-7 hidden md:flex">
+              {renderIcons()}
             </div>
+
+            {/* ICONS - MOBILE DROPDOWN */}
+            <div className="relative md:hidden">
+              <button
+                onClick={toggleDropdown}
+                className="px-3 py-2 text-sm bg-light-50/10 text-white border border-light-50/20 rounded-sm mr-3"
+              >
+                Links ▾
+              </button>
+
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-44 bg-warm-800 border border-light-50/20 rounded-sm shadow-md p-2 z-50">
+                  <div className="flex flex-wrap gap-2 justify-center">{renderIcons()}</div>
+                </div>
+              )}
+            </div>
+
           </div>
-          <div className="w-full h-16 bg-light-100/40 dark:bg-warm-800/90 backdrop-blur-sm">
+          <div className="w-full rounded-b-md h-16 bg-light-100/40 dark:bg-warm-800/90 backdrop-blur-sm">
             <div className="ml-48 h-16 grid grid-cols-5  text-warm-400 dark:text-light-500 font-medium text-lg">
               {tabs.map((tab) => (
                 <div
@@ -158,7 +183,7 @@ export default function ProfileHeader({ profile }: { profile: any }) {
               ))}
             </div>
           </div>
-          <div className="absolute left-12 bottom-7">
+          <div className="absolute left-12 bottom-7 ">
             <div>
               <img
                 src={avatarUrl}
