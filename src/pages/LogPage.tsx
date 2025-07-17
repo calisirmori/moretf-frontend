@@ -49,7 +49,7 @@ export default function LogPage({ logId }: Props) {
         )}
 
         {selectedTab === "CHARTS" && (
-          <TeamPerformanceChart timeline={data.timeline} />
+          <TeamPerformanceChart timeline={data.timeline} players={data.players}/>
         )}
 
         {selectedTab === "PLAY-BY-PLAY" && (
