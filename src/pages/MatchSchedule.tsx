@@ -114,7 +114,7 @@ export default function MatchSchedule() {
     days.push(current);
     current = addDays(current, 1);
   }
-  console.log(filteredMatches);
+
   return (
     <div className="w-full min-h-screen bg-light-50 dark:bg-warm-700 py-6">
       <div className="max-w-6xl mx-auto px-4">

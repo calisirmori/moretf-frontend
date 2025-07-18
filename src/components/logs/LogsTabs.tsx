@@ -4,7 +4,7 @@ interface LogsTabsProps {
 }
 
 const LogsTabs: React.FC<LogsTabsProps> = ({ selectedTab, setSelectedTab }) => {
-  const tabs = ["BOX SCORE", "CHARTS", "PLAY-BY-PLAY"];
+  const tabs = ["BOX SCORE", "CHARTS", "TIMELINE", "PLAY-BY-PLAY"];
 
   return (
     <div className="w-full">
@@ -24,7 +24,7 @@ const LogsTabs: React.FC<LogsTabsProps> = ({ selectedTab, setSelectedTab }) => {
       </div>
 
       {/* Desktop tab buttons */}
-      <div className="hidden md:grid grid-cols-3">
+      <div className="hidden md:grid grid-cols-4">
         {tabs.map((tab) => (
           <button
             key={tab}

@@ -1,0 +1,38 @@
+export interface PlayerStats {
+    name: string;
+    character: string;
+    steamId: string;
+    team: "Blue" | "Red";
+    min: string;
+    kills: number;
+    deaths: number;
+    assists: number;
+    damage: number;
+    kdr: number;
+    kda: number;
+    damageTaken: number;
+    healing: number;
+    ubers: number;
+    drops: number;
+    airShots: number;
+    backStabs: number;
+    headShots: number;
+    captures: number;
+    totalTimeAlive: number;
+    totalTime: number;
+    nearChargeDeaths: number;
+    medDrops: number;
+    objectsBuilt: number;
+    objectsDestroyed?: number;
+    killSpread: Record<string, number>;
+    deathSpread: Record<string, number>;
+    damageDealtSpread: Record<string, number>;
+    damageTakenSpread: Record<string, number>;
+    healingDoneSpread?: Record<string, number>;
+    healedBySource?: Record<string, number>;
+    killsByClass?: Record<string, number>;
+    deathsByClass?: Record<string, number>;
+    assistsByClass?: Record<string, number>;
+    classStats: Record<string, { classType: string; totalTime: number }>;
+    itemPickups: Record<string, number>;
+}
