@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { mapCordinates } from "./MapCalibrations";
-import type { PlayerStats } from "../../../types/PlayerStats";
 
 interface PlayerLocation {
     x: number;

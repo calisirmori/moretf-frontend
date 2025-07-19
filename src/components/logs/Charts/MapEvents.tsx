@@ -2,11 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { mapCordinates } from "./MapCalibrations";
 import type { PlayerStats } from "../../../types/PlayerStats";
 
-interface Player {
-    steamId: string;
-    team: "Red" | "Blue";
-    userName: string;
-}
 
 interface PlayerLocation {
     x: number;
@@ -31,24 +26,6 @@ interface MapEventsProps {
     localPlayerId: string;
 }
 
-const getClassIconFilename = (className: string) => {
-    const map: Record<string, string> = {
-        scout: "scout.png",
-        soldier: "soldier.png",
-        pyro: "pyro.png",
-        demo: "demoman.png",
-        demoman: "demoman.png",
-        heavy: "heavyweapons.png",
-        heavyweapons: "heavyweapons.png",
-        engineer: "engineer.png",
-        medic: "medic.png",
-        sniper: "sniper.png",
-        spy: "spy.png",
-    };
-
-    const key = className.toLowerCase();
-    return map[key] || "scout.png"; // fallback icon
-};
 
 function transformCoordinates(x: number, y: number, mapName: string = "default") {
     const { scale, x: calibX, y: calibY } = mapCordinates[mapName] || mapCordinates.default;
@@ -63,7 +40,6 @@ function transformCoordinates(x: number, y: number, mapName: string = "default")
 export const MapEvents: React.FC<MapEventsProps> = ({
     players,
     events,
-    mapName,
     localPlayerId,
 }) => {
     const [mode, setMode] = useState<"kills" | "deaths">("kills");

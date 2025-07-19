@@ -226,7 +226,7 @@ const LogKillsByClass: React.FC<Props> = ({ data }) => {
   );
 
   return (
-    <div className="text-warm-800 dark:text-light-50 bg-light-200/60 dark:bg-warm-800/90 p-4 font-ttnorms px-10">
+    <div className="text-warm-800 dark:text-light-50 bg-light-100/50 dark:bg-warm-800/60 p-4 font-ttnorms px-10">
       <div className="flex justify-center gap-2 mb-4">
         {(["kills", "assists", "deaths"] as const).map((m) => (
           <button

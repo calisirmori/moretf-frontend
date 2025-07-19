@@ -12,7 +12,7 @@ export interface PlayerStats {
     kda: number;
     damageTaken: number;
     healing: number;
-    ubers: number;
+    ubers: number | Record<string, number>;
     drops: number;
     airShots: number;
     backStabs: number;
@@ -24,6 +24,9 @@ export interface PlayerStats {
     medDrops: number;
     objectsBuilt: number;
     objectsDestroyed?: number;
+    deathsBeforeUber: number;
+    deathsDuringUber: number;
+    totalUberLength: number;
     killSpread: Record<string, number>;
     deathSpread: Record<string, number>;
     damageDealtSpread: Record<string, number>;

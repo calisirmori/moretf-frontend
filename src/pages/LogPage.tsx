@@ -8,6 +8,7 @@ import LogsTabs from "../components/logs/LogsTabs";
 import PlayByPlayTable from "../components/logs/PlayByPlayTab/PlayByPlayTable";
 import TeamPerformanceChart from "../components/logs/Timeline/TimelineChart";
 import ChartsWrapper from "../components/logs/Charts/ChartsWrapper";
+import LogsHealingStats from "../components/logs/BoxScoreTab/LogsHealingStats";
 
 interface Props {
   logId: string;
@@ -45,6 +46,7 @@ export default function LogPage({ logId }: Props) {
             />
             <LogsTeamStatsTable data={data.teams} />
             <LogsRoundStatsTable data={data.rounds} />
+            <LogsHealingStats data={data.players} minHealingThreshold={1000} />
             <LogKillsByClass data={data.players} />
           </>
         )}

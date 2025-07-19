@@ -1,28 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
-interface PlayerStats {
-  name: string;
-  character?: string;
-  steamId: string;
-  team: string;
-  min: string;
-  kills: number;
-  deaths: number;
-  assists: number;
-  damage: number;
-  kdr: number;
-  kda: number;
-  damageTaken: number;
-  healing: number;
-  ubers: number;
-  drops: number;
-  airShots: number;
-  backStabs: number;
-  headShots: number;
-  captures: number;
-  itemPickups: Record<string, number> | null;
-  classStats: Record<string, { classType: string; totalTime: number }> | null;
-}
+import type { PlayerStats } from "../../../types/PlayerStats";
 
 interface PlayerSidebarProps {
   playersByTeam: Record<"Blue" | "Red", { id: string; team: string }[]>;

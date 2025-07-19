@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { QuoteIcon } from "./QuoteIcon";
 import { DisconnectIcon } from "./DisconnectIcon";
-import { DivideIcon } from "@heroicons/react/24/solid";
 import ChargeIcon from "./ChargeUsedIcon";
+import Tooltip from '../../common/Tooltip';
 
 interface PlayerLocation {
   x: number;
@@ -57,29 +57,58 @@ const PlayByPlayTable: React.FC<Props> = ({ events }) => {
   };
 
   // Track hasCharge across the timeline
-  const processedEvents: (PlayEvent & { targetHadCharge?: boolean, targetDiedDuringActiveCharge?: boolean })[] = [];
-  let hasCharge = { Red: false, Blue: false };
-  let activeCharge = { Red: false, Blue: false };
+  const processedEvents: (PlayEvent & {
+  targetHadCharge?: boolean;
+  targetDiedDuringActiveCharge?: boolean;
+  targetDroppedCharge?: boolean; // new flag for drops
+})[] = [];
 
-  for (const e of events) {
-    if (e.eventType === "chargeready" && e.team) {
-      hasCharge[e.team] = true;
-    } else if (e.eventType === "chargedeployed" && e.team) {
-      hasCharge[e.team] = false;
-      activeCharge[e.team] = true;
-    } else if (e.eventType === "chargeended" && e.team) {
-      activeCharge[e.team] = false;
-    }
+let hasCharge = { Red: false, Blue: false };
+let activeCharge = { Red: false, Blue: false };
 
-    const isKill = e.eventType === "kill";
-    const targetTeam = e.team === "Red" ? "Blue" : e.team === "Blue" ? "Red" : undefined;
+// Track which player currently has Uber ready, per team
+let chargedPlayer: { [team in "Red" | "Blue"]?: string } = {};
 
-    processedEvents.push({
-      ...e,
-      targetHadCharge: isKill && targetTeam && hasCharge[targetTeam],
-      targetDiedDuringActiveCharge: isKill && targetTeam && activeCharge[targetTeam],
-    });
+for (const e of events) {
+  const isKill = e.eventType === "kill";
+  const targetTeam = e.team === "Red" ? "Blue" : e.team === "Blue" ? "Red" : undefined;
+
+  // Handle charge state changes
+  if (e.eventType === "chargeready" && e.team && e.actingPlayerID) {
+    hasCharge[e.team] = true;
+    chargedPlayer[e.team] = e.actingPlayerID;
+  } else if (e.eventType === "chargedeployed" && e.team) {
+    hasCharge[e.team] = false;
+    activeCharge[e.team] = true;
+    chargedPlayer[e.team] = undefined; // they used it
+  } else if (e.eventType === "chargeended" && e.team) {
+    activeCharge[e.team] = false;
   }
+
+  let targetDroppedCharge = false;
+
+  // Detect drop (death while holding charge, before using it)
+  if (
+    isKill &&
+    targetTeam &&
+    hasCharge[targetTeam] &&
+    chargedPlayer[targetTeam] &&
+    e.targetPlayerID === chargedPlayer[targetTeam]
+  ) {
+    targetDroppedCharge = true;
+    hasCharge[targetTeam] = false;
+    chargedPlayer[targetTeam] = undefined;
+  }
+
+  processedEvents.push({
+    ...e,
+    targetHadCharge: isKill && targetTeam && hasCharge[targetTeam],
+    targetDiedDuringActiveCharge: isKill && targetTeam && activeCharge[targetTeam],
+    targetDroppedCharge,
+  });
+}
+
+  
   const filteredEvents = processedEvents
     .filter(e =>
       enabledEvents[e.eventType] &&
@@ -139,12 +168,21 @@ const PlayByPlayTable: React.FC<Props> = ({ events }) => {
           const content = (
             <div className="flex items-center gap-2">
               {e.eventType === "kill" && (
-                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 relative">
+                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 border border-warm-600 relative">
                   {e.targetHadCharge && (
-                    <div className="absolute -top-2 right-0 text-yellow-400 text-sm font-bold">★</div>
+                    <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"} select-none text-yellow-400 text-sm font-bold`}>
+                      <Tooltip text="enemy team has uber">★</Tooltip>
+                    </div>
                   )}
                   {e.targetDiedDuringActiveCharge && (
-                    <div className="absolute top-0 left-0 text-blue-400 text-lg font-bold">✦</div>
+                    <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"} select-none text-blue-400 text-sm font-bold`}>
+                      <Tooltip text="killed during uber">✦</Tooltip>
+                    </div>
+                  )}
+                  {e.targetDroppedCharge && (
+                    <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"} select-none text-red-400 text-sm font-bold`}>
+                      <Tooltip text="uber drop">✶</Tooltip>
+                    </div>
                   )}
                   <div className={`font-semibold ${isRed ? "text-brand-red" : "text-brand-blue"}`}>{e.actingPlayerID}</div>
                   {/* <img
@@ -158,64 +196,64 @@ const PlayByPlayTable: React.FC<Props> = ({ events }) => {
               )}
 
               {(e.eventType === "say" || e.eventType === "say_team") && (
-                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2 relative">
                   <div className={`font-semibold ${isRed ? "text-brand-red" : "text-brand-blue"}`}>
                     {e.actingPlayerID}
                   </div>
                   <div className="">{e.message}</div>
-                  <QuoteIcon />
+                  <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"}`}><QuoteIcon /></div>
                 </div>
               )}
               {e.eventType === "disconnected" && (
-                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2 relative">
                   <div className={`font-semibold ${isRed ? "text-brand-red" : "text-brand-blue"}`}>
                     {e.actingPlayerID}
                   </div>
                   <div className="">{e.message}</div>
-                  <DisconnectIcon />
+                  <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"}`}><DisconnectIcon /></div>
                 </div>
               )}
               {e.eventType === "round_start" && (
-                <div className="flex w-fit px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2">
                   <div className="bg-brand-blue px-2 rounded">{e.scoreBlue}</div>
                   <div className="">Round Start</div>
                   <div className="bg-brand-red px-2 rounded">{e.scoreRed}</div>
                 </div>
               )}
               {e.eventType === "chargedeployed" && (
-                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2 relative">
                   <div className={`font-semibold ${isRed ? "text-brand-red" : "text-brand-blue"}`}>
                     {e.actingPlayerID}
                   </div>
                   <div className="capitalize ">{e.weapon?.toLowerCase()} charge used</div>
-                  <ChargeIcon />
+                  <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"}`}><ChargeIcon /></div>
                 </div>
               )}
               {e.eventType === "chargeready" && (
-                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2 relative">
                   <div className={`font-semibold ${isRed ? "text-brand-red" : "text-brand-blue"}`}>
                     {e.actingPlayerID}
                   </div>
                   <div className="capitalize ">{e.weapon?.toLowerCase()} charge ready</div>
-                  <ChargeIcon />
+                  <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"}`}><ChargeIcon /></div>
                 </div>
               )}
               {e.eventType === "chargeended" && (
-                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit  px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2 relative">
                   <div className={`font-semibold ${isRed ? "text-brand-red" : "text-brand-blue"}`}>
                     {e.actingPlayerID}
                   </div>
                   <div className="capitalize ">{e.weapon?.toLowerCase()} charge ended</div>
-                  <ChargeIcon />
+                  <div className={`absolute ${e.team === "Blue" ? "-top-2 -right-1" : "-top-2 -left-1"}`}><ChargeIcon /></div>
                 </div>
               )}
               {e.eventType === "round_win" && (
-                <div className="flex w-fit px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2">
                   <div className="">Team {e.team} won the round</div>
                 </div>
               )}
               {e.eventType === "game_over" && (
-                <div className="flex w-fit px-4 py-1 rounded-md bg-warm-800 items-center gap-2">
+                <div className="flex w-fit px-4 py-1 rounded-md bg-warm-800 border border-warm-600 items-center gap-2">
                   <div className="">Game Over</div>
                 </div>
               )}

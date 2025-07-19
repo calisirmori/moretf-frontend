@@ -62,12 +62,6 @@ export default function MatchesTab() {
         setSearchParams(searchParams)
     }
 
-    const handleSort = (column: string) => {
-        const newOrder = sortBy === column && sortOrder === 'asc' ? 'desc' : 'asc'
-        searchParams.set('sortBy', column)
-        searchParams.set('sortOrder', newOrder)
-        setSearchParams(searchParams)
-    }
 
     return (
         <div className="bg-dark p-3 bg-light-100 dark:bg-warm-800 rounded-md text-warm-800 dark:text-light-100 font-semibold ">

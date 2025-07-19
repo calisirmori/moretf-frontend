@@ -1,4 +1,9 @@
 import React, { useMemo, useState } from "react";
+import NewTag from '../../common/NewTag';
+import Tooltip from '../../common/Tooltip';
+import type { PlayerStats } from "../../../types/PlayerStats";
+import ClassStatsHover from "./ClassStatsHover";
+import PlayerIdentity from "../../common/PlayersIdentity";
 
 interface Props {
     data: PlayerStats[];
@@ -17,33 +22,11 @@ const CLASS_ORDER = [
     "spy",
 ];
 
-const getClassOrderIndex = (cls: string) => {
+const getClassOrderIndex = (cls: any) => {
     const lower = cls?.toLowerCase();
     return CLASS_ORDER.indexOf(lower) === -1 ? 999 : CLASS_ORDER.indexOf(lower);
 };
 
-interface PlayerStats {
-    name: string;
-    character?: string;
-    team: string;
-    min: string;
-    kills: number;
-    deaths: number;
-    assists: number;
-    damage: number;
-    kdr: number;
-    kda: number;
-    damageTaken: number;
-    healing: number;
-    ubers: number;
-    drops: number;
-    airShots: number;
-    backStabs: number;
-    headShots: number;
-    captures: number;
-    itemPickups: Record<string, number> | null;
-    classStats: Record<string, { classType: string; totalTime: number }> | null;
-}
 
 interface Props {
     data: PlayerStats[];
@@ -76,8 +59,15 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
                 className={`border-b max-md:text-xs border-warm-500/20 dark:border-light-400/10 ${i % 2 === 0 ? "bg-light-200/40 dark:bg-warm-800/40 " : ""}`}
             >
                 <td className={`w-8 text-xs text-center uppercase font-bold pr-2 text-light-50/80 border-b ${p.team == "Blue" ? " bg-brand-blue border-brand-blue-dark" : "bg-brand-red border-brand-red-dark"}`}>{p.team == "Red" ? "Red" : "Blu"}</td>
-                <td className="py-1.5 ml-2 border-r border-light-500/20 dark:border-warm-500/80 pr-2 flex items-center gap-2 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
-                    <span className="truncate">{p.name}</span>
+                <td className="py-1.5 ml-2 border-r border-light-500/20 dark:border-warm-500/80 pr-2 flex items-center gap-2 font-medium whitespace-nowrap  text-ellipsis max-w-full">
+                    <PlayerIdentity
+                      steamId={p.steamId}
+                      username={p.name}
+                      usernameStyleId={3}      
+                      badge1={1}              
+                      badge2={2}               
+                      badge3={null}            
+                    />
                 </td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">
                     {p.classStats
@@ -90,13 +80,12 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
                           return classArr.map(cls => {
                             const opacity = (cls.totalTime / mostPlayedTime).toFixed(2);
                             return (
-                              <img
-                                key={cls.classType}
-                                src={`/classIcons/${getClassIconFilename(cls.classType)}`}
-                                alt={cls.classType}
-                                className="inline-block w-5 h-5 mr-1"
-                                style={{ opacity }}
-                              />
+                              <ClassStatsHover
+                                  classStat={cls}
+                                  iconSrc={`/classIcons/${getClassIconFilename(cls.classType)}`}
+                                  iconSize={20}
+                                  iconOpacity={opacity}
+                                />
                             );
                           });
                         })()
@@ -131,7 +120,9 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.backStabs === "number" ? p.backStabs : "-"}</td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.headShots === "number" ? p.headShots : "-"}</td>
                 <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.airShots === "number" ? p.airShots : "-"}</td>
-                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.captures === "number" ? p.captures : "-"}</td>
+                {/* <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.captures === "number" ? p.captures : "-"}</td> */}
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.deathsBeforeUber === "number" ? p.deathsBeforeUber : "-"}</td>
+                <td className="border-r border-light-500/20 dark:border-warm-500/20 text-center">{typeof p.deathsDuringUber === "number" ? p.deathsDuringUber : "-"}</td>
             </tr>
         ))}
     </tbody>
@@ -190,13 +181,13 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
         });
         return sorted;
     }, [data, sortKey, sortDirection]);
-
-
-
+    
     const renderSortableHeader = (
       key: keyof PlayerStats | "teamClass" | "healthPickups",
       label: string,
-      small: boolean
+      small: boolean,
+      tooltip: string,
+        isNew?: boolean,
     ) => {
         const handleClick = () => {
             if (sortKey === key) {
@@ -223,10 +214,10 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
 
         return (
             <th
-                className={`${small ? "w-8" : "w-12"} border-r border-warm-500/30 dark:border-light-400/20 text-warm-600 dark:text-light-100 text-center cursor-pointer select-none `}
+                className={`${small ? "w-8" : "w-12"} border-r relative  border-warm-500/30 dark:border-light-400/20 text-warm-600 dark:text-light-100 text-center cursor-pointer select-none `}
                 onClick={handleClick}
             >
-                {label} {arrow}
+                <Tooltip text={tooltip}>{label}</Tooltip> {arrow}  {isNew && <NewTag />}
             </th>
         );
     };
@@ -260,21 +251,21 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                         <tr className="text-left border-b border-warm-600/60 dark:border-light-400/20 text-warm-600 dark:text-light-400 text-xs uppercase">
                             <th className="w-8 pb-1">Team</th>
                             <th className="w-40 pb-2 border-r border-warm-500/80">Player</th>
-                            {renderSortableHeader("character", "C", false)}
-                            {renderSortableHeader("kills", "K", true)}
-                            {renderSortableHeader("deaths", "D", true)}
-                            {renderSortableHeader("assists", "A", true)}
-                            {renderSortableHeader("damage", "DA", false)}
-                            {renderSortableHeader("damage", "DPM", false)}
-                            {renderSortableHeader("kda", "K+A/D", false)}
-                            {renderSortableHeader("kdr", "K/D", false)}
-                            {renderSortableHeader("damageTaken", "DT", false)}
-                            {renderSortableHeader("damageTaken", "DTM", false)}
-                            {renderSortableHeader("healthPickups", "HP", true)}
-                            {renderSortableHeader("backStabs", "BS", true)}
-                            {renderSortableHeader("headShots", "HS", true)}
-                            {renderSortableHeader("airShots", "AS", true)}
-                            {renderSortableHeader("captures", "CAP", true)}
+                            {renderSortableHeader("character", "C", false, "Class")}
+                            {renderSortableHeader("kills", "K", true, "Kills")}
+                            {renderSortableHeader("deaths", "D", true, "Deaths")}
+                            {renderSortableHeader("assists", "A", true, "Assists")}
+                            {renderSortableHeader("damage", "DA", false, "Damage")}
+                            {renderSortableHeader("damage", "DPM", false, "Damage per Minute")}
+                            {renderSortableHeader("kda", "K+A/D", false, "Kills+Assits/Deaths")}
+                            {renderSortableHeader("kdr", "K/D", false, "Kills/Deaths")}
+                            {renderSortableHeader("damageTaken", "DT", false, "Damage Taken")}
+                            {renderSortableHeader("damageTaken", "DTM", false, "Damage Taken per Minute")}
+                            {renderSortableHeader("healthPickups", "HP", true, "Health Pickups")}
+                            {renderSortableHeader("backStabs", "BS", true, "Backstabs")}
+                            {renderSortableHeader("headShots", "HS", true, "Headshots")}
+                            {renderSortableHeader("airShots", "AS", true, "Airshots")}
+                            {/* {renderSortableHeader("captures", "CAP", true , "Captures")} */}
                         </tr>
                     </thead>
                     <TableBody data={sortedData} gameLengthMinutes={gameLengthMinutes} />
@@ -286,21 +277,23 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                     <tr className="text-left border-b border-warm-500/30 dark:border-light-400/20 text-warm-600 dark:text-light-400 text-xs uppercase">
                         <th className="w-8 pb-1">Team</th>
                         <th className="w-40 pb-1 border-r border-warm-500/30">Player</th>
-                        {renderSortableHeader("character", "C", false)}
-                        {renderSortableHeader("kills", "K", true)}
-                        {renderSortableHeader("deaths", "D", true)}
-                        {renderSortableHeader("assists", "A", true)}
-                        {renderSortableHeader("damage", "DA", false)}
-                        {renderSortableHeader("damage", "DPM", false)}
-                        {renderSortableHeader("kda", "K+A/D", false)}
-                        {renderSortableHeader("kdr", "K/D", false)}
-                        {renderSortableHeader("damageTaken", "DT", false)}
-                        {renderSortableHeader("damageTaken", "DTM", false)}
-                        {renderSortableHeader("healthPickups", "HP", true)}
-                        {renderSortableHeader("backStabs", "BS", true)}
-                        {renderSortableHeader("headShots", "HS", true)}
-                        {renderSortableHeader("airShots", "AS", true)}
-                        {renderSortableHeader("captures", "CAP", true)}
+                        {renderSortableHeader("character", "C", false, "Class")}
+                        {renderSortableHeader("kills", "K", true, "Kills")}
+                        {renderSortableHeader("deaths", "D", true, "Deaths")}
+                        {renderSortableHeader("assists", "A", true, "Assists")}
+                        {renderSortableHeader("damage", "DA", false, "Damage")}
+                        {renderSortableHeader("damage", "DPM", false, "Damage per Minute")}
+                        {renderSortableHeader("kda", "K+A/D", false, "Kills+Assits/Deaths")}
+                        {renderSortableHeader("kdr", "K/D", false, "Kills/Deaths")}
+                        {renderSortableHeader("damageTaken", "DT", false, "Damage Taken")}
+                        {renderSortableHeader("damageTaken", "DTM", false, "Damage Taken per Minute")}
+                        {renderSortableHeader("healthPickups", "HP", true, "Health Pickups")}
+                        {renderSortableHeader("backStabs", "BS", true, "Backstabs")}
+                        {renderSortableHeader("headShots", "HS", true, "Headshots")}
+                        {renderSortableHeader("airShots", "AS", true, "Airshots")}
+                        {/* {renderSortableHeader("captures", "CAP", true , "Captures")} */}
+                        {renderSortableHeader("deathsBeforeUber", "DBU", true , "Deaths Right Before Uber", true)}
+                        {renderSortableHeader("deathsDuringUber", "DDU", true , "Deaths During Uber", true)}
                     </tr>
                 </thead>
                 <TableBody data={sortedData} gameLengthMinutes={gameLengthMinutes} />
