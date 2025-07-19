@@ -2,6 +2,7 @@ export interface PlayerStats {
     name: string;
     character: string;
     steamId: string;
+    steamId64: string;
     team: "Blue" | "Red";
     min: string;
     kills: number;

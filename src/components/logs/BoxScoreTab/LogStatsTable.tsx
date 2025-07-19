@@ -51,14 +51,15 @@ const getClassIconFilename = (className: string) => {
     return map[key] || "scout.png"; // fallback icon
 };
 
-const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengthMinutes: number }) => (
+const TableBody = ({ data, gameLengthMinutes}: { data: PlayerStats[], gameLengthMinutes: number}) => (
     <tbody>
         {data.map((p, i) => (
             <tr
                 key={i}
-                className={`border-b max-md:text-xs border-warm-500/20 dark:border-light-400/10 ${i % 2 === 0 ? "bg-light-200/40 dark:bg-warm-800/40 " : ""}`}
+                className={`border-b relative max-md:text-xs border-warm-500/20 dark:border-light-400/10 ${i % 2 === 0 ? "bg-light-200/40 dark:bg-warm-800/40 " : ""}`}
             >
                 <td className={`w-8 text-xs text-center uppercase font-bold pr-2 text-light-50/80 border-b ${p.team == "Blue" ? " bg-brand-blue border-brand-blue-dark" : "bg-brand-red border-brand-red-dark"}`}>{p.team == "Red" ? "Red" : "Blu"}</td>
+                
                 <td className="py-1.5 ml-2 border-r border-light-500/20 dark:border-warm-500/80 pr-2 flex items-center gap-2 font-medium whitespace-nowrap  text-ellipsis max-w-full">
                     <PlayerIdentity
                       steamId={p.steamId}
@@ -128,10 +129,12 @@ const TableBody = ({ data, gameLengthMinutes }: { data: PlayerStats[], gameLengt
     </tbody>
 );
 
-const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
+const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes}) => {
     const [sortKey, setSortKey] = useState<keyof PlayerStats | "teamClass" | "healthPickups">("teamClass");
     type SortDirection = "desc" | "asc" | "default";
     const [sortDirection, setSortDirection] = useState<SortDirection>("default");
+
+    
 
     const sortedData = useMemo(() => {
         const sorted = [...data].sort((a, b) => {
@@ -296,7 +299,7 @@ const LogStatsTable: React.FC<Props> = ({ data, gameLengthMinutes }) => {
                         {renderSortableHeader("deathsDuringUber", "DDU", true , "Deaths During Uber", true)}
                     </tr>
                 </thead>
-                <TableBody data={sortedData} gameLengthMinutes={gameLengthMinutes} />
+                <TableBody data={sortedData} gameLengthMinutes={gameLengthMinutes}/>
             </table>
         </div>
     );

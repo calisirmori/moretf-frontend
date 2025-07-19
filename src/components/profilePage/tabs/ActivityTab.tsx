@@ -10,7 +10,9 @@ export default function ActivityTab() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:8080/activity?id64=76561198083063071")
+        fetch("https://api.more.tf/activity?id64=76561198083063071", {
+              credentials: "include"
+            })
             .then((res) => res.json())
             .then((data) => {
                 setActivityData(data);

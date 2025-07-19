@@ -4,7 +4,11 @@ import App from "./App";
 import "./index.css";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Buffer } from "buffer";
+import process from "process";
 
+window.Buffer = Buffer;
+window.process = process;
 // ✅ Instantiate the client
 const queryClient = new QueryClient();
 

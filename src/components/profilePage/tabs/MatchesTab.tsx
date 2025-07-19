@@ -46,7 +46,9 @@ export default function MatchesTab() {
             ...(sortOrder && { sortOrder }),
         })
 
-        fetch(`http://localhost:8080/logs?${query}`)
+        fetch(`https://api.more.tf/logs?${query}`, {
+              credentials: "include"
+            })
             .then(res => res.json())
             .then(json => {
                 setData(json.data)
