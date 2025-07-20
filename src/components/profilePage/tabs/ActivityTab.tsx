@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://api.more.tf";
 type DailyActivity = {
     activityDate: string;
     totalMatches: number;
@@ -10,7 +10,7 @@ export default function ActivityTab() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("https://api.more.tf/activity?id64=76561198083063071", {
+        fetch(`${baseUrl}/activity?id64=76561198083063071`, {
               credentials: "include"
             })
             .then((res) => res.json())

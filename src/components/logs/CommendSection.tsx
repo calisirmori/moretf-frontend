@@ -1,3 +1,6 @@
+import { useState } from "react";
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://api.more.tf";
 interface Props {
   players: any[];
   logId: string;
@@ -5,7 +8,6 @@ interface Props {
   isPlayerInThisMatch: boolean;
   commendCounts: Record<string, number>;
   commendStatus: Record<string, boolean>;
-//   setCommendStatus: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 }
 
 export default function CommendSection({
@@ -15,10 +17,13 @@ export default function CommendSection({
   isPlayerInThisMatch,
   commendCounts,
   commendStatus,
-//   setCommendStatus,
 }: Props) {
+  // local state to show instant UI updates for self
+  const [localCommendStatus, setLocalCommendStatus] = useState<Record<string, boolean>>({});
+  const [localCommendCounts, setLocalCommendCounts] = useState<Record<string, number>>({});
+
   const handleCommend = async (commendedId: string) => {
-    if (!loggedInSteamId || commendStatus[commendedId]) return;
+    if (!loggedInSteamId || commendStatus[commendedId] || localCommendStatus[commendedId]) return;
 
     const event = {
       logId,
@@ -26,8 +31,15 @@ export default function CommendSection({
       commendedId,
     };
 
+    // update UI immediately
+    setLocalCommendStatus((prev) => ({ ...prev, [commendedId]: true }));
+    setLocalCommendCounts((prev) => ({
+      ...prev,
+      [commendedId]: (commendCounts[commendedId] ?? 0) + 1,
+    }));
+
     try {
-      const res = await fetch(`https://api.more.tf/log/${logId}/commend/bulk`, {
+      const res = await fetch(`${baseUrl}/log/${logId}/commend/bulk`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,9 +49,16 @@ export default function CommendSection({
         body: JSON.stringify([event]),
       });
 
-      if (!res.ok) console.error("Commend failed");
+      if (!res.ok) {
+        console.error("Commend failed");
+        // rollback optimistic UI on error
+        setLocalCommendStatus((prev) => ({ ...prev, [commendedId]: false }));
+        setLocalCommendCounts((prev) => ({ ...prev, [commendedId]: commendCounts[commendedId] ?? 0 }));
+      }
     } catch (err) {
       console.error("Commend error:", err);
+      setLocalCommendStatus((prev) => ({ ...prev, [commendedId]: false }));
+      setLocalCommendCounts((prev) => ({ ...prev, [commendedId]: commendCounts[commendedId] ?? 0 }));
     }
   };
 
@@ -54,8 +73,10 @@ export default function CommendSection({
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {players.map((player) => {
           const isSelf = loggedInSteamId === player.steamId64;
-          const alreadyCommended = commendStatus[player.steamId64];
-          const commendCount = commendCounts[player.steamId64] || 0;
+          const alreadyCommended =
+            commendStatus[player.steamId64] || localCommendStatus[player.steamId64];
+          const commendCount =
+            localCommendCounts[player.steamId64] ?? commendCounts[player.steamId64] ?? 0;
 
           return (
             <div

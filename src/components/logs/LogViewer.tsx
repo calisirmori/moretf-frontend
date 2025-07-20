@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://api.more.tf";
 interface Props {
   logId: string
 }
@@ -9,7 +9,7 @@ export default function LogViewer({ logId }: Props) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch(`https://api.more.tf/log/${logId}`)
+    fetch(`${baseUrl}/log/${logId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch log")
         return res.json()

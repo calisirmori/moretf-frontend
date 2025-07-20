@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import Pagination from '../../common/Pagination'
-
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://api.more.tf";
 export default function MatchesTab() {
     const { playerId } = useParams()
     const [searchParams, setSearchParams] = useSearchParams()
@@ -46,7 +46,7 @@ export default function MatchesTab() {
             ...(sortOrder && { sortOrder }),
         })
 
-        fetch(`https://api.more.tf/logs?${query}`, {
+        fetch(`${baseUrl}/logs?${query}`, {
               credentials: "include"
             })
             .then(res => res.json())

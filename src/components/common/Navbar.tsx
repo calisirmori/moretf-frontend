@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useEffect, useRef, useState } from "react";
-
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://api.more.tf";
 export default function Navbar() {
   const { pathname } = useLocation();
   const { isDark, toggleTheme } = useTheme();
@@ -15,7 +15,7 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    fetch("https://api.more.tf/auth/status", {
+    fetch(`${baseUrl}/auth/status`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -41,15 +41,12 @@ export default function Navbar() {
   }, []);
 
   const handleLogin = () => {
-    const backend = import.meta.env.DEV
-      ? "https://api.more.tf"
-      : "https://api.more.tf";
     const frontend = window.location.origin;
-    window.location.href = `${backend}/auth/login?state=${encodeURIComponent(frontend)}`;
+    window.location.href = `${baseUrl}/auth/login?state=${encodeURIComponent(frontend)}`;
   };
 
   const handleLogout = () => {
-  fetch("https://api.more.tf/auth/logout", {
+  fetch(`${baseUrl}/auth/logout`, {
     method: "GET",
     credentials: "include"
   })

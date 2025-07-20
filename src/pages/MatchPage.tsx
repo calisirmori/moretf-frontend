@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import LogHeader from "../components/logs/LogHeader";
 
 import LogsTabs from "../components/logs/LogsTabs";
+const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://api.more.tf";
 
 interface Props {
   logId: string;
@@ -13,7 +14,7 @@ export default function MatchPage({ logId }: Props) {
   const [selectedTab, setSelectedTab] = useState<string>("BOX SCORE");
 
   useEffect(() => {
-    fetch(`https://api.more.tf/log/${logId}`)
+    fetch(`${baseUrl}/log/${logId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch log");
         return res.json();

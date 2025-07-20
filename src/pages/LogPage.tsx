@@ -11,6 +11,7 @@ import ChartsWrapper from "../components/logs/Charts/ChartsWrapper";
 import LogsHealingStats from "../components/logs/BoxScoreTab/LogsHealingStats";
 import CommendSection from "../components/logs/CommendSection";
 import { useCommendSocket } from "../hooks/useCommendSocket";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface Props {
   logId: string;
@@ -39,7 +40,7 @@ export default function LogPage({ logId }: Props) {
     }
   });
   useEffect(() => {
-    fetch(`https://api.more.tf/log/${logId}`, {
+    fetch(`${baseUrl}/log/${logId}`, {
   credentials: "include"
 })
       .then((res) => {
@@ -57,7 +58,7 @@ export default function LogPage({ logId }: Props) {
 
 
   useEffect(() => {
-    fetch("https://api.more.tf/auth/status", {
+    fetch(`${baseUrl}/auth/status`, {
       credentials: "include"
     })
       .then(res => res.json())
@@ -81,6 +82,8 @@ export default function LogPage({ logId }: Props) {
     <div className="bg-light-50 dark:bg-warm-700 min-h-screen p-6 text-white flex justify-center items-center">
       <div className="min-h-screen max-w-7xl w-full">
         <LogHeader info={data.info} />
+        <div className="hidden">
+
         <CommendSection
           players={data.players}
           commendCounts={commendCounts}
@@ -90,6 +93,7 @@ export default function LogPage({ logId }: Props) {
           loggedInSteamId={loggedInSteamId}
           isPlayerInThisMatch={isPlayerInThisMatch}
         />
+        </div>
         <LogsTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
         {selectedTab === "BOX SCORE" && (
