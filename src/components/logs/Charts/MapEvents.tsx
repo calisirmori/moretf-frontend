@@ -40,6 +40,7 @@ function transformCoordinates(x: number, y: number, mapName: string = "default")
 export const MapEvents: React.FC<MapEventsProps> = ({
     players,
     events,
+    mapName,
     localPlayerId,
 }) => {
     const [mode, setMode] = useState<"kills" | "deaths">("kills");
@@ -48,7 +49,6 @@ export const MapEvents: React.FC<MapEventsProps> = ({
     const [hoveredEvent, setHoveredEvent] = useState<Event | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const activeMapName = "product";
     const playerMap = Object.fromEntries(players.map((p) => [p.steamId, p]));
 
     useEffect(() => {
@@ -138,8 +138,8 @@ export const MapEvents: React.FC<MapEventsProps> = ({
                 )}
 
                 <img
-                    src={`/mapImages/${activeMapName}.png`}
-                    alt={`${activeMapName} map`}
+                    src={`/mapImages/${mapName}.png`}
+                    alt={`${mapName} map`}
                     className="absolute w-full h-full opac object-contain opacity-85"
                 />
 
@@ -152,12 +152,12 @@ export const MapEvents: React.FC<MapEventsProps> = ({
                         const killerPos = transformCoordinates(
                             event.actingPlayerLocation.x,
                             event.actingPlayerLocation.y,
-                            activeMapName
+                            mapName
                         );
                         const victimPos = transformCoordinates(
                             event.targetPlayerLocation.x,
                             event.targetPlayerLocation.y,
-                            activeMapName
+                            mapName
                         );
 
                         return (

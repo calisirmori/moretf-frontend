@@ -99,13 +99,10 @@ export default function ChartsWrapper({ players, events, mapName }: { players: P
                                 />
                             </div>
                             <div className="lg:grid lg:grid-cols-3 w-full gap-2">
-                                <MapEvents players={players} events={events} mapName={mapName} localPlayerId={selectedPlayer ?? ""} />
-                                <MapEventsHeatMapKills events={events} mapName="product" localPlayerId={selectedPlayer ?? ""} />
-                                <MapEventsHeatMapDeaths events={events} mapName="product" localPlayerId={selectedPlayer ?? ""} />
+                                <MapEvents players={players} events={events} mapName={mapName.split("_")[1]} localPlayerId={selectedPlayer ?? ""} />
+                                <MapEventsHeatMapKills events={events} mapName={mapName.split("_")[1]} localPlayerId={selectedPlayer ?? ""} />
+                                <MapEventsHeatMapDeaths events={events} mapName={mapName.split("_")[1]} localPlayerId={selectedPlayer ?? ""} />
                             </div>
-
-
-
                         </div>
                     ) : (
                         <p className="text-light-600">Select a player to view stats.</p>
